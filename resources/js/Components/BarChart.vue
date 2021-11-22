@@ -104,8 +104,6 @@ export default {
       this.value.reset();
       var i=0;
       var jumlahAnggota = 0;
-      var total_array = [];
-      var indexPoin = [];
 
       for(var y=0;y<this.penilaianTims.length;y++){
         for(var z=0;z<this.tims.length;z++){
@@ -122,13 +120,12 @@ export default {
             var v = 0;
             var w = 0;
             var x = 0;
-            total_array[v] = 0;
-            var sub_total_array = [];
-            var indexPoin = [];
+            var kriteria_array = [];
             for(var j=0;j < this.penilaianDetails.length;j++){                       
-              var sub_total = 0;  
-              sub_total_array[x] = 0;
-              indexPoin[x] = 0;
+              var sub_total = 0;
+              var index_kriteria = 0;
+              var this_kriteria = ''
+              var this_sub_kriteria = '';
               if(this.penilaianDetails[j].kriteria.nama == kriteria){
                 if(this.penilaianDetails[j].penilaian.tim_unit_id == this.penilaianTims[index].tim_unit_id){                
                   for(var k=0;k<this.tims.length;k++){
@@ -146,7 +143,7 @@ export default {
                         && bulan_penilaian == bulan_periode_akhir && tahun_penilaian == tahun_periode_akhir
                         ){      
                             if(this.indexKriterias[l].kriteria == this.penilaianDetails[j].kriteria.nama && this.indexKriterias[l].sub_kriteria == this.penilaianDetails[j].kriteria.sub_kriteria){
-                              sub_total = sub_total + this.penilaianDetails[j].nilai
+                              sub_total = sub_total + this.penilaianDetails[j].nilai;
                             }
                         }               
                       }
@@ -180,39 +177,24 @@ export default {
                         && bulan_penilaian == bulan_periode_akhir && tahun_penilaian == tahun_periode_akhir
                         ){      
                             if(this.indexKriterias[l].kriteria == this.penilaianDetails[j].kriteria.nama && this.indexKriterias[l].sub_kriteria == this.penilaianDetails[j].kriteria.sub_kriteria){
-                                sub_total_array[x] = sub_total_array[x] + this.penilaianDetails[j].nilai
+                                sub_total = sub_total + this.penilaianDetails[j].nilai
+                                this_kriteria = this.penilaianDetails[j].kriteria.nama;
+                                this_sub_kriteria = this.penilaianDetails[j].kriteria.sub_kriteria;
+                                index_kriteria = this.indexKriterias[l].index;
                             }
                         }               
                       }
                       
                     }                    
                   }    
-                  sub_total_array[x] = sub_total_array[x]/jumlahAnggota;
-                  for(var n=0;n<=this.indexKriterias.length-1;n++){
-                    if(this.indexKriterias[n].kriteria == kriteria && this.indexKriterias[n].sub_kriteria == this.penilaianDetails[j].kriteria.sub_kriteria){
-                        sub_total_array[x] = sub_total_array[x]*this.indexKriterias[n].index
-                    }
-                    else if(kriteria == 'total' && this.indexKriterias[n].sub_kriteria == ''){
-                      indexPoin[w] = this.indexKriterias[n];
-                    }
-                  }
-                  total_array[v] = total_array[v] + sub_total_array[x];   
-                  v++;
-                  w++;
+                  kriteria_array[x].nilai = sub_total/jumlahAnggota;
+                  kriteria_array[x].kriteria = this_kriteria;
+                  kriteria_array[x].sub_kriteria = this_kriteria;
+                  kriteria_array[x].index = index_kriteria;
+                  kriteria;
                   x++;
                 }
               }
-            }
-            if(kriteria == 'total'){
-              for(var a = 0;a < indexPoin.length; a++){
-                total = total + (total_array[a]*indexPoin[a].index);
-              }
-            } else if(kriteria != 'total'){
-              for(var m=0;m<=this.indexKriterias.length-1;m++){
-                  if(this.indexKriterias[m].kriteria == kriteria && this.indexKriterias[m].sub_kriteria == ''){
-                    total = total*this.indexKriterias[m].index
-                  }
-              }              
             }
             this.value.seriesTemp[i] = parseFloat((total).toFixed(2));
             i++;
