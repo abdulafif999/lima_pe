@@ -16,63 +16,22 @@
                     <div id="chart">
                         <bar-chart :timList="timList" :penilaianTims="penilaianTims" :penilaianChart="penilaianChart" 
                         :penilaianDetails="penilaianDetails" :tims="tims" :indexKriterias="indexKriterias"></bar-chart>
-                    </div>                    
-<!-- 
-                    <div class="mt-3 flex items-center text-sm font-semibold">
-    
-                        <div class="flex justify-between font-semibold text-xl text-gray-800 leading-tight">
-                            
-                            <select  class="border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm mt-1 block"
-                                v-model="form.kriteria">
-                                                
-                                <option value="" disabled selected>Select Kriteria</option>
-                                <option value="P1">P1</option>
-                                <option value="P2">P2</option>
-                                <option value="P3">P3</option>
-                                <option value="P4">P4</option>
-                                <option value="P5">P5</option>
-                                <option value="total">Semua Nilai</option>
-                            </select>
-                        </div>
-
-                        <div class="ml-4 text-center text-sm sm:text-right sm:ml-0">
-                            
-                            <select  class="border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm mt-1 block"
-                                v-model="form.timUnit">
-                                                
-                                <option value="" disabled selected>Pilih Tim 5P</option>
-                                <option v-for="tim in timList" :key="tim.id" :value="tim.id">{{tim.nama}}</option>
-                            </select>
-                        </div>
                     </div>
-                    <div>
-                        <jet-button class="ml-2" @click="getChartSeries()">
-                            Lihat
-                        </jet-button>                            
-                    </div>                     -->
                 </div>
             </div>
 
             <div class="p-6 border-t border-gray-200 md:border-t-0 md:border-l">
                 <div class="flex items-center">
-                    <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" class="w-8 h-8 text-gray-400"><path d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path><path d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                    <div class="ml-4 text-lg text-gray-600 leading-7 font-semibold"><a href="https://laracasts.com">Laracasts</a></div>
                 </div>
 
                 <div class="ml-12">
                     <div class="mt-2 text-sm text-gray-500">
-                        Laracasts offers thousands of video tutorials on Laravel, PHP, and JavaScript development. Check them out, see for yourself, and massively level up your development skills in the process.
+                        <div id="rankingChart">
+                            <ranking-chart :timList="timList" :penilaianTims="penilaianTims" :rankingChart="rankingChart" 
+                            :penilaianDetails="penilaianDetails" :tims="tims" :indexKriterias="indexKriterias"
+                            ></ranking-chart>
+                        </div>      
                     </div>
-
-                    <a href="https://laracasts.com">
-                        <div class="mt-3 flex items-center text-sm font-semibold text-indigo-700">
-                                <div>Start watching Laracasts</div>
-
-                                <div class="ml-1 text-indigo-500">
-                                    <svg viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4"><path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
-                                </div>
-                        </div>
-                    </a>
                 </div>
             </div>
 
@@ -91,13 +50,12 @@
 
             <div class="p-6 border-t border-gray-200 md:border-l">
                 <div class="flex items-center">
-                    <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" class="w-8 h-8 text-gray-400"><path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
-                    <div class="ml-4 text-lg text-gray-600 leading-7 font-semibold">Authentication</div>
+                    <div class="ml-4 text-lg text-gray-600 leading-7 font-semibold">Last Updated</div>
                 </div>
 
-                <div class="ml-12">
+                <div>
                     <div class="mt-2 text-sm text-gray-500">
-                        Authentication and registration views are included with Laravel Jetstream, as well as support for user email verification and resetting forgotten passwords. So, you're free to get started what matters most: building your application.
+                        <last-updated :penilaians="penilaians" :tims="tims"></last-updated>
                     </div>
                 </div>
             </div>
@@ -111,7 +69,9 @@
     import JetButton from '@/Jetstream/Button.vue'
     import JetSecondaryButton from '@/Jetstream/SecondaryButton.vue'
     import BarChart from '@/Components/BarChart.vue'
+    import RankingChart from '@/Components/RankingChart.vue'
     import VueApexCharts from "vue3-apexcharts";
+    import LastUpdated from '@/Components/LastUpdated.vue'
     import { Container } from 'postcss'
     
     export default defineComponent({
@@ -120,7 +80,9 @@
             JetButton,
             JetSecondaryButton,
             BarChart,
-            apexchart:VueApexCharts
+            RankingChart,
+            apexchart:VueApexCharts,
+            LastUpdated,
         },
         props:{
             penilaianDetails:Array,
@@ -128,15 +90,10 @@
             tims:Array,
             timUnits:Array,
             penilaianChart:Object,
+            rankingChart:Object,
             timList:Array,
             penilaianTims:Array,
-            indexKriterias:Array
+            indexKriterias:Array,
         },
-        methods:{
-            updateSeries(){
-
-            }
-        }
-
     })
 </script>

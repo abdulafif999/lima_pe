@@ -12,7 +12,8 @@
                     <welcome :penilaianDetails="penilaianDetails" :penilaians="penilaians" 
                     :tims="tims" :timUnits="timUnits" :penilaianChart="penilaianChart" 
                     :timList="timList" :penilaianTims="penilaianTims" 
-                    :indexKriterias="indexKriterias" />
+                    :indexKriterias="indexKriterias" :rankingChart="rankingChart"
+                     />
                 </div>
             </div>
         </div>
@@ -36,9 +37,10 @@
             tims:Array,
             timUnits:Array,
             penilaianChart:Object,
+            rankingChart:Object,
             timList:Array,
             penilaianTims:Array,
-            indexKriterias:Array
+            indexKriterias:Array,
         }
     })
 </script>

@@ -4,7 +4,7 @@ namespace App\Charts;
 
 use ArielMejiaDev\LarapexCharts\LarapexChart;
 
-class BarChart
+class RankingChart
 {
     protected $chart;
 
@@ -16,9 +16,10 @@ class BarChart
     public function build(): array
     {
         return $this->chart->barChart()
-            ->setTitle('Nilai 5P dari Tim 5P yang ada')
+            ->setTitle('Top 5 Best and Worst')
+            ->setSubtitle('')
             ->addData('Nilai 5P', [])
-            ->setXAxis([])
+            ->setXAxis([''])
             ->setColors(['#ffc63b', '#ff6384'])
             ->setMarkers(['#FF5722'], 7, 10)
             ->toVue();

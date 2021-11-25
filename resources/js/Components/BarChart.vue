@@ -42,7 +42,7 @@
         v-model="form.timUnit">
                                                   
           <option value="" disabled selected>Pilih Tim 5P</option>
-          <option v-for="tim in timList" :key="tim.id" :value="tim.id">{{tim.nama}}</option>
+          <option v-for="tim in timList" :key="tim.id" :value="tim.nama">{{tim.nama}}</option>
         </select>
     </div>    
   </div>
@@ -103,30 +103,30 @@ export default {
       var tahun_periode = date.getFullYear(this.form.periode);
       this.value.reset();
       var i=0;
+      
       var jumlahAnggota = 0;
-
+    
       for(var y=0;y<this.penilaianTims.length;y++){
         for(var z=0;z<this.tims.length;z++){
-          if(this.penilaianTims[y].tim_id == this.tims[z].tim_id && this.penilaianTims[y].tim_unit_id == timUnit){
+          if(this.penilaianTims[y].tim_id == this.tims[z].tim_id && this.penilaianTims[y].tim_unit.nama == timUnit){
             jumlahAnggota++;
           }
         }
       };
       
       for(var index=0;index < this.penilaianTims.length;index++){
-          if(this.penilaianTims[index].tim_unit_id == timUnit){
+          if(this.penilaianTims[index].tim_unit.nama == timUnit){
             this.value.categoriesTemp[i] = this.penilaianTims[index].tim.nama;
             var total = 0;
-            var v = 0;
             var w = 0;
             var x = 0;
             var kriteria_array = [];
+            var total_array = [];
             for(var j=0;j < this.penilaianDetails.length;j++){                       
               var sub_total = 0;
-              var index_kriteria = 0;
-              var this_kriteria = ''
-              var this_sub_kriteria = '';
-              if(this.penilaianDetails[j].kriteria.nama == kriteria){
+              var index_kriteria = '';
+              kriteria_array[x] = {};
+              if(kriteria == this.penilaianDetails[j].kriteria.nama ){
                 if(this.penilaianDetails[j].penilaian.tim_unit_id == this.penilaianTims[index].tim_unit_id){                
                   for(var k=0;k<this.tims.length;k++){
                     if(this.penilaianDetails[j].penilaian.pernum == this.tims[k].karyawan.pernum && this.tims[k].tim_id == this.penilaianTims[index].tim_id){
@@ -164,22 +164,20 @@ export default {
                 if(this.penilaianDetails[j].penilaian.tim_unit_id == this.penilaianTims[index].tim_unit_id){
                   for(var k=0;k<this.tims.length;k++){
                     if(this.penilaianDetails[j].penilaian.pernum == this.tims[k].karyawan.pernum && this.tims[k].tim_id == this.penilaianTims[index].tim_id){
-                      for(var l=0;l<=this.indexKriterias.length-1;l++){
+                      for(var l=0;l < this.indexKriterias.length;l++){
                         var bulan_periode_awal = date.getMonth(this.indexKriterias[l].periode_awal);
                         var tahun_periode_awal = date.getFullYear(this.indexKriterias[l].periode_awal);
                         var bulan_periode_akhir = date.getMonth(this.indexKriterias[l].periode_akhir);
                         var tahun_periode_akhir = date.getFullYear(this.indexKriterias[l].periode_akhir);
                         var bulan_penilaian = date.getMonth(this.penilaianDetails[j].penilaian.tgl);
                         var tahun_penilaian = date.getFullYear(this.penilaianDetails[j].penilaian.tgl);
-                        if(bulan_periode == bulan_periode_awal && tahun_periode == tahun_periode_awal 
-                        && bulan_periode == bulan_periode_akhir && tahun_periode == tahun_periode_akhir 
-                        && bulan_penilaian == bulan_periode_awal && tahun_penilaian == tahun_periode_awal 
-                        && bulan_penilaian == bulan_periode_akhir && tahun_penilaian == tahun_periode_akhir
+                        if(bulan_periode >= bulan_periode_awal && tahun_periode >= tahun_periode_awal 
+                        && bulan_periode <= bulan_periode_akhir && tahun_periode <= tahun_periode_akhir 
+                        && bulan_penilaian >= bulan_periode_awal && tahun_penilaian >= tahun_periode_awal 
+                        && bulan_penilaian <= bulan_periode_akhir && tahun_penilaian <= tahun_periode_akhir
                         ){      
                             if(this.indexKriterias[l].kriteria == this.penilaianDetails[j].kriteria.nama && this.indexKriterias[l].sub_kriteria == this.penilaianDetails[j].kriteria.sub_kriteria){
                                 sub_total = sub_total + this.penilaianDetails[j].nilai
-                                this_kriteria = this.penilaianDetails[j].kriteria.nama;
-                                this_sub_kriteria = this.penilaianDetails[j].kriteria.sub_kriteria;
                                 index_kriteria = this.indexKriterias[l].index;
                             }
                         }               
@@ -187,13 +185,43 @@ export default {
                       
                     }                    
                   }    
-                  kriteria_array[x].nilai = sub_total/jumlahAnggota;
-                  kriteria_array[x].kriteria = this_kriteria;
-                  kriteria_array[x].sub_kriteria = this_kriteria;
-                  kriteria_array[x].index = index_kriteria;
-                  kriteria;
+                  kriteria_array[x].sub_nilai = (sub_total/jumlahAnggota) * index_kriteria;
+                  kriteria_array[x].kriteria = this.penilaianDetails[j].kriteria.nama;
+                  kriteria_array[x].sub_kriteria = this.penilaianDetails[j].kriteria.sub_kriteria;
+                  kriteria_array[x].tgl = this.penilaianDetails[j].penilaian.tgl;
                   x++;
                 }
+
+              }
+            }
+            if(kriteria == 'total'){
+              for(var a = 0;a < this.indexKriterias.length; a++){
+                if(this.indexKriterias[a].sub_kriteria == ''){
+                    total_array[w] = 0;
+                    var bulan_periode_awal = date.getMonth(this.indexKriterias[a].periode_awal);
+                    var tahun_periode_awal = date.getFullYear(this.indexKriterias[a].periode_awal);
+                    var bulan_periode_akhir = date.getMonth(this.indexKriterias[a].periode_akhir);
+                    var tahun_periode_akhir = date.getFullYear(this.indexKriterias[a].periode_akhir);
+                    if(bulan_periode >= bulan_periode_awal && tahun_periode >= tahun_periode_awal 
+                    && bulan_periode <= bulan_periode_akhir && tahun_periode <= tahun_periode_akhir
+                    ){                   
+                      for(var b = 0;b < kriteria_array.length;b++){
+                        var bulan_penilaian = date.getMonth(kriteria_array[b].tgl);
+                        var tahun_penilaian = date.getFullYear(kriteria_array[b].tgl);
+                        if(this.indexKriterias[a].kriteria == kriteria_array[b].kriteria){
+                          if(bulan_penilaian >= bulan_periode_awal && tahun_penilaian >= tahun_periode_awal && bulan_penilaian <= bulan_periode_akhir && tahun_penilaian <= tahun_periode_akhir){
+                              total_array[w] = total_array[w] + kriteria_array[b].sub_nilai;
+                              
+                          }
+                        }
+                      }
+                    }
+                    total_array[w] = total_array[w] * this.indexKriterias[a].index
+                    w++;
+                }
+              }
+              for(var c=0;c < total_array.length;c++){
+                total = total + total_array[c]
               }
             }
             this.value.seriesTemp[i] = parseFloat((total).toFixed(2));
@@ -203,7 +231,17 @@ export default {
       this.penilaianChart.options = {
         xaxis:{
           categories:this.value.categoriesTemp
-        }
+        },
+        chart:{
+          toolbar:true,
+          animations:{
+            enabled:true,
+          }
+        },
+        subtitle:{
+          text : this.form.timUnit
+        },
+        colors: ['#66DA26', '#2E93fA', '#546E7A', '#E91E63', '#FF9800'],
       };
       this.penilaianChart.series[0].data = this.value.seriesTemp
       this.penilaianChart.series[0].name = this.form.kriteria

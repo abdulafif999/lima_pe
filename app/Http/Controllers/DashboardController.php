@@ -3,11 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Charts\BarChart;
+use App\Charts\RankingChart;
 use App\Models\Dashboard;
 use App\Models\IndexKriteria;
+use App\Models\KategoriHasil;
 use App\Models\Penilaian;
 use App\Models\PenilaianDetail;
 use App\Models\PenilaianTim;
+use App\Models\Tim;
 use App\Models\TimDetail;
 use App\Models\TimUnit;
 use App\Models\UnitDetail;
@@ -21,7 +24,7 @@ class DashboardController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(BarChart $penilaianChart)
+    public function index(BarChart $penilaianChart, RankingChart $rankingChart)
     {
         $penilaianDetail = PenilaianDetail::with('kriteria', 'penilaian')->get();
         $penilaian = Penilaian::with('karyawan', 'timUnit')->get();
@@ -30,6 +33,7 @@ class DashboardController extends Controller
         $timlist = TimUnit::all();
         $penilaianTim = PenilaianTim::with('tim', 'timUnit')->get();
         $indexKriterias = IndexKriteria::all();
+        $kategoriHasil = KategoriHasil::all();
 
         return Inertia::render('Dashboard', [
             'penilaians' => $penilaian,
@@ -39,7 +43,9 @@ class DashboardController extends Controller
             'timUnits' => $timUnit,
             'timList' => $timlist,
             'penilaianTims' => $penilaianTim,
-            'indexKriterias' => $indexKriterias
+            'indexKriterias' => $indexKriterias,
+            'rankingChart' => $rankingChart->build(),
+            'kategoriHasil' => $kategoriHasil,
 
         ]);
     }

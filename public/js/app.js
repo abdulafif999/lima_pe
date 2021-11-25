@@ -15632,7 +15632,7 @@ __webpack_require__.r(__webpack_exports__);
 
       for (var y = 0; y < this.penilaianTims.length; y++) {
         for (var z = 0; z < this.tims.length; z++) {
-          if (this.penilaianTims[y].tim_id == this.tims[z].tim_id && this.penilaianTims[y].tim_unit_id == timUnit) {
+          if (this.penilaianTims[y].tim_id == this.tims[z].tim_id && this.penilaianTims[y].tim_unit.nama == timUnit) {
             jumlahAnggota++;
           }
         }
@@ -15641,21 +15641,20 @@ __webpack_require__.r(__webpack_exports__);
       ;
 
       for (var index = 0; index < this.penilaianTims.length; index++) {
-        if (this.penilaianTims[index].tim_unit_id == timUnit) {
+        if (this.penilaianTims[index].tim_unit.nama == timUnit) {
           this.value.categoriesTemp[i] = this.penilaianTims[index].tim.nama;
           var total = 0;
-          var v = 0;
           var w = 0;
           var x = 0;
           var kriteria_array = [];
+          var total_array = [];
 
           for (var j = 0; j < this.penilaianDetails.length; j++) {
             var sub_total = 0;
-            var index_kriteria = 0;
-            var this_kriteria = '';
-            var this_sub_kriteria = '';
+            var index_kriteria = '';
+            kriteria_array[x] = {};
 
-            if (this.penilaianDetails[j].kriteria.nama == kriteria) {
+            if (kriteria == this.penilaianDetails[j].kriteria.nama) {
               if (this.penilaianDetails[j].penilaian.tim_unit_id == this.penilaianTims[index].tim_unit_id) {
                 for (var k = 0; k < this.tims.length; k++) {
                   if (this.penilaianDetails[j].penilaian.pernum == this.tims[k].karyawan.pernum && this.tims[k].tim_id == this.penilaianTims[index].tim_id) {
@@ -15690,7 +15689,7 @@ __webpack_require__.r(__webpack_exports__);
               if (this.penilaianDetails[j].penilaian.tim_unit_id == this.penilaianTims[index].tim_unit_id) {
                 for (var k = 0; k < this.tims.length; k++) {
                   if (this.penilaianDetails[j].penilaian.pernum == this.tims[k].karyawan.pernum && this.tims[k].tim_id == this.penilaianTims[index].tim_id) {
-                    for (var l = 0; l <= this.indexKriterias.length - 1; l++) {
+                    for (var l = 0; l < this.indexKriterias.length; l++) {
                       var bulan_periode_awal = date.getMonth(this.indexKriterias[l].periode_awal);
                       var tahun_periode_awal = date.getFullYear(this.indexKriterias[l].periode_awal);
                       var bulan_periode_akhir = date.getMonth(this.indexKriterias[l].periode_akhir);
@@ -15698,11 +15697,9 @@ __webpack_require__.r(__webpack_exports__);
                       var bulan_penilaian = date.getMonth(this.penilaianDetails[j].penilaian.tgl);
                       var tahun_penilaian = date.getFullYear(this.penilaianDetails[j].penilaian.tgl);
 
-                      if (bulan_periode == bulan_periode_awal && tahun_periode == tahun_periode_awal && bulan_periode == bulan_periode_akhir && tahun_periode == tahun_periode_akhir && bulan_penilaian == bulan_periode_awal && tahun_penilaian == tahun_periode_awal && bulan_penilaian == bulan_periode_akhir && tahun_penilaian == tahun_periode_akhir) {
+                      if (bulan_periode >= bulan_periode_awal && tahun_periode >= tahun_periode_awal && bulan_periode <= bulan_periode_akhir && tahun_periode <= tahun_periode_akhir && bulan_penilaian >= bulan_periode_awal && tahun_penilaian >= tahun_periode_awal && bulan_penilaian <= bulan_periode_akhir && tahun_penilaian <= tahun_periode_akhir) {
                         if (this.indexKriterias[l].kriteria == this.penilaianDetails[j].kriteria.nama && this.indexKriterias[l].sub_kriteria == this.penilaianDetails[j].kriteria.sub_kriteria) {
                           sub_total = sub_total + this.penilaianDetails[j].nilai;
-                          this_kriteria = this.penilaianDetails[j].kriteria.nama;
-                          this_sub_kriteria = this.penilaianDetails[j].kriteria.sub_kriteria;
                           index_kriteria = this.indexKriterias[l].index;
                         }
                       }
@@ -15710,13 +15707,44 @@ __webpack_require__.r(__webpack_exports__);
                   }
                 }
 
-                kriteria_array[x].nilai = sub_total / jumlahAnggota;
-                kriteria_array[x].kriteria = this_kriteria;
-                kriteria_array[x].sub_kriteria = this_kriteria;
-                kriteria_array[x].index = index_kriteria;
-                kriteria;
+                kriteria_array[x].sub_nilai = sub_total / jumlahAnggota * index_kriteria;
+                kriteria_array[x].kriteria = this.penilaianDetails[j].kriteria.nama;
+                kriteria_array[x].sub_kriteria = this.penilaianDetails[j].kriteria.sub_kriteria;
+                kriteria_array[x].tgl = this.penilaianDetails[j].penilaian.tgl;
                 x++;
               }
+            }
+          }
+
+          if (kriteria == 'total') {
+            for (var a = 0; a < this.indexKriterias.length; a++) {
+              if (this.indexKriterias[a].sub_kriteria == '') {
+                total_array[w] = 0;
+                var bulan_periode_awal = date.getMonth(this.indexKriterias[a].periode_awal);
+                var tahun_periode_awal = date.getFullYear(this.indexKriterias[a].periode_awal);
+                var bulan_periode_akhir = date.getMonth(this.indexKriterias[a].periode_akhir);
+                var tahun_periode_akhir = date.getFullYear(this.indexKriterias[a].periode_akhir);
+
+                if (bulan_periode >= bulan_periode_awal && tahun_periode >= tahun_periode_awal && bulan_periode <= bulan_periode_akhir && tahun_periode <= tahun_periode_akhir) {
+                  for (var b = 0; b < kriteria_array.length; b++) {
+                    var bulan_penilaian = date.getMonth(kriteria_array[b].tgl);
+                    var tahun_penilaian = date.getFullYear(kriteria_array[b].tgl);
+
+                    if (this.indexKriterias[a].kriteria == kriteria_array[b].kriteria) {
+                      if (bulan_penilaian >= bulan_periode_awal && tahun_penilaian >= tahun_periode_awal && bulan_penilaian <= bulan_periode_akhir && tahun_penilaian <= tahun_periode_akhir) {
+                        total_array[w] = total_array[w] + kriteria_array[b].sub_nilai;
+                      }
+                    }
+                  }
+                }
+
+                total_array[w] = total_array[w] * this.indexKriterias[a].index;
+                w++;
+              }
+            }
+
+            for (var c = 0; c < total_array.length; c++) {
+              total = total + total_array[c];
             }
           }
 
@@ -15731,7 +15759,17 @@ __webpack_require__.r(__webpack_exports__);
       this.penilaianChart.options = {
         xaxis: {
           categories: this.value.categoriesTemp
-        }
+        },
+        chart: {
+          toolbar: true,
+          animations: {
+            enabled: true
+          }
+        },
+        subtitle: {
+          text: this.form.timUnit
+        },
+        colors: ['#66DA26', '#2E93fA', '#546E7A', '#E91E63', '#FF9800']
       };
       this.penilaianChart.series[0].data = this.value.seriesTemp;
       this.penilaianChart.series[0].name = this.form.kriteria;
@@ -15743,6 +15781,49 @@ __webpack_require__.r(__webpack_exports__);
       chartQuarter.updateOptions(options);
       chartQuarter.updateSeries(series);
       chartQuarter.render();
+    }
+  }
+});
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/js/Components/LastUpdated.vue?vue&type=script&lang=js":
+/*!*****************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/js/Components/LastUpdated.vue?vue&type=script&lang=js ***!
+  \*****************************************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  props: {
+    penilaians: Array,
+    penilaianDetails: Array,
+    kriterias: Array,
+    tims: Array
+  },
+  data: function data() {
+    return {
+      detailNilai: false,
+      selectedPenilaian: {},
+      nilaiTotal: 0,
+      form: this.$inertia.form({
+        listNilai: []
+      })
+    };
+  },
+  methods: {
+    getTimPenilai: function getTimPenilai() {
+      for (var index = 0; index <= this.penilaians.length - 1; index++) {
+        for (var j = 0; j <= this.tims.length - 1; j++) {
+          if (this.penilaians[index].pernum == this.tims[j].karyawan.pernum) {
+            this.penilaians[index].nama_tim = this.tims[j].tim.nama;
+          }
+        }
+      }
     }
   }
 });
@@ -15763,6 +15844,238 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   props: {
     links: Array
+  }
+});
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/js/Components/RankingChart.vue?vue&type=script&lang=js":
+/*!******************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/js/Components/RankingChart.vue?vue&type=script&lang=js ***!
+  \******************************************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _Jetstream_Button_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @/Jetstream/Button.vue */ "./resources/js/Jetstream/Button.vue");
+/* harmony import */ var vue3_apexcharts__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! vue3-apexcharts */ "./node_modules/vue3-apexcharts/dist/vue3-apexcharts.common.js");
+/* harmony import */ var vue3_apexcharts__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(vue3_apexcharts__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _Jetstream_Input_vue__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @/Jetstream/Input.vue */ "./resources/js/Jetstream/Input.vue");
+
+
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  name: "RankingChart",
+  components: {
+    JetButton: _Jetstream_Button_vue__WEBPACK_IMPORTED_MODULE_0__["default"],
+    JetInput: _Jetstream_Input_vue__WEBPACK_IMPORTED_MODULE_2__["default"],
+    apexcharts: (vue3_apexcharts__WEBPACK_IMPORTED_MODULE_1___default())
+  },
+  props: {
+    tims: Array,
+    timList: Array,
+    penilaianTims: Array,
+    rankingChart: Object,
+    penilaianDetails: Array,
+    indexKriterias: Array
+  },
+  data: function data() {
+    return {
+      form: this.$inertia.form({
+        rank: '',
+        timRank: {},
+        periode: ''
+      }),
+      value: this.$inertia.form({
+        categoriesTemp: [],
+        seriesTemp: []
+      }),
+      list: this.$inertia.form({
+        daftarTim: [{}],
+        listTim: []
+      })
+    };
+  },
+  methods: {
+    getRanking: function getRanking(rank) {
+      this.list.reset();
+      var date = new Date();
+      var bulan_periode = date.getMonth(this.form.periode);
+      var tahun_periode = date.getFullYear(this.form.periode);
+
+      for (var h = 0; h < this.timList.length; h++) {
+        var nilai_final = 0;
+        var total = [];
+        var kategori = [];
+        this.list.daftarTim[h] = this.timList[h];
+        var i = 0;
+        var jumlahAnggota = 0;
+
+        for (var y = 0; y < this.penilaianTims.length; y++) {
+          for (var z = 0; z < this.tims.length; z++) {
+            if (this.penilaianTims[y].tim_id == this.tims[z].tim_id && this.penilaianTims[y].tim_unit.nama == this.timList[h].nama) {
+              jumlahAnggota++;
+            }
+          }
+        }
+
+        ;
+
+        for (var index = 0; index < this.penilaianTims.length; index++) {
+          if (this.penilaianTims[index].tim_unit.nama == this.timList[h].nama) {
+            kategori[i] = this.penilaianTims[index].tim.nama;
+            var w = 0;
+            var x = 0;
+            var kriteria_array = [];
+            var total_array = [];
+
+            for (var j = 0; j < this.penilaianDetails.length; j++) {
+              var sub_total = 0;
+              var index_kriteria = '';
+              kriteria_array[x] = {};
+
+              if (this.penilaianDetails[j].penilaian.tim_unit_id == this.penilaianTims[index].tim_unit_id) {
+                for (var k = 0; k < this.tims.length; k++) {
+                  if (this.penilaianDetails[j].penilaian.pernum == this.tims[k].karyawan.pernum && this.tims[k].tim_id == this.penilaianTims[index].tim_id) {
+                    for (var l = 0; l < this.indexKriterias.length; l++) {
+                      var bulan_periode_awal = date.getMonth(this.indexKriterias[l].periode_awal);
+                      var tahun_periode_awal = date.getFullYear(this.indexKriterias[l].periode_awal);
+                      var bulan_periode_akhir = date.getMonth(this.indexKriterias[l].periode_akhir);
+                      var tahun_periode_akhir = date.getFullYear(this.indexKriterias[l].periode_akhir);
+                      var bulan_penilaian = date.getMonth(this.penilaianDetails[j].penilaian.tgl);
+                      var tahun_penilaian = date.getFullYear(this.penilaianDetails[j].penilaian.tgl);
+
+                      if (bulan_periode >= bulan_periode_awal && tahun_periode >= tahun_periode_awal && bulan_periode <= bulan_periode_akhir && tahun_periode <= tahun_periode_akhir && bulan_penilaian >= bulan_periode_awal && tahun_penilaian >= tahun_periode_awal && bulan_penilaian <= bulan_periode_akhir && tahun_penilaian <= tahun_periode_akhir) {
+                        if (this.indexKriterias[l].kriteria == this.penilaianDetails[j].kriteria.nama && this.indexKriterias[l].sub_kriteria == this.penilaianDetails[j].kriteria.sub_kriteria) {
+                          sub_total = sub_total + this.penilaianDetails[j].nilai;
+                          index_kriteria = this.indexKriterias[l].index;
+                        }
+                      }
+                    }
+                  }
+                }
+
+                kriteria_array[x].sub_nilai = sub_total / jumlahAnggota * index_kriteria;
+                kriteria_array[x].kriteria = this.penilaianDetails[j].kriteria.nama;
+                kriteria_array[x].sub_kriteria = this.penilaianDetails[j].kriteria.sub_kriteria;
+                kriteria_array[x].tgl = this.penilaianDetails[j].penilaian.tgl;
+                x++;
+              }
+            }
+
+            for (var a = 0; a < this.indexKriterias.length; a++) {
+              if (this.indexKriterias[a].sub_kriteria == '') {
+                total_array[w] = 0;
+                var bulan_periode_awal = date.getMonth(this.indexKriterias[a].periode_awal);
+                var tahun_periode_awal = date.getFullYear(this.indexKriterias[a].periode_awal);
+                var bulan_periode_akhir = date.getMonth(this.indexKriterias[a].periode_akhir);
+                var tahun_periode_akhir = date.getFullYear(this.indexKriterias[a].periode_akhir);
+
+                if (bulan_periode >= bulan_periode_awal && tahun_periode >= tahun_periode_awal && bulan_periode <= bulan_periode_akhir && tahun_periode <= tahun_periode_akhir) {
+                  for (var b = 0; b < kriteria_array.length; b++) {
+                    var bulan_penilaian = date.getMonth(kriteria_array[b].tgl);
+                    var tahun_penilaian = date.getFullYear(kriteria_array[b].tgl);
+
+                    if (this.indexKriterias[a].kriteria == kriteria_array[b].kriteria) {
+                      if (bulan_penilaian >= bulan_periode_awal && tahun_penilaian >= tahun_periode_awal && bulan_penilaian <= bulan_periode_akhir && tahun_penilaian <= tahun_periode_akhir) {
+                        total_array[w] = total_array[w] + kriteria_array[b].sub_nilai;
+                      }
+                    }
+                  }
+                }
+
+                total_array[w] = total_array[w] * this.indexKriterias[a].index;
+                w++;
+              }
+            }
+
+            total[i] = 0;
+
+            for (var c = 0; c < total_array.length; c++) {
+              total[i] = parseFloat((total[i] + total_array[c]).toFixed(2));
+            }
+
+            i++;
+          }
+        }
+
+        for (var d = 0; d < total.length; d++) {
+          nilai_final = nilai_final + total[d];
+        }
+
+        this.list.daftarTim[h].nilai_final = parseFloat((nilai_final / i).toFixed(2));
+        this.list.daftarTim[h].kategori = kategori;
+        this.list.daftarTim[h].series = total;
+      }
+
+      this.addRanking();
+    },
+    addRanking: function addRanking() {
+      var tempObject = {};
+
+      if (this.form.rank == 'top') {
+        for (var i = 0; i < this.list.daftarTim.length; i++) {
+          for (var j = i + 1; j < this.list.daftarTim.length; j++) {
+            if (this.list.daftarTim[j].nilai_final >= this.list.daftarTim[i].nilai_final) {
+              tempObject = this.list.daftarTim[j];
+              this.list.daftarTim[j] = this.list.daftarTim[i];
+              this.list.daftarTim[i] = tempObject;
+            }
+          }
+        }
+      } else if (this.form.rank == 'bottom') {
+        for (var i = 0; i < this.list.daftarTim.length; i++) {
+          for (var j = i + 1; j < this.list.daftarTim.length; j++) {
+            if (this.list.daftarTim[j].nilai_final <= this.list.daftarTim[i].nilai_final) {
+              tempObject = this.list.daftarTim[j];
+              this.list.daftarTim[j] = this.list.daftarTim[i];
+              this.list.daftarTim[i] = tempObject;
+            }
+          }
+        }
+      }
+
+      for (var k = 0; k < 5; k++) {
+        this.list.listTim[k] = this.list.daftarTim[k];
+
+        if (this.form.rank == 'top') {
+          this.list.listTim[k].rank = 'Tim ke-' + k + 1 + 'Tertinggi';
+        } else if (this.form.rank == 'bottom') {
+          this.list.listTim[k].rank = 'Tim ke-' + k + 1 + 'Terendah';
+        }
+      }
+    },
+    fillData: function fillData() {
+      var tim = this.form.timRank;
+      this.rankingChart.options = {
+        xaxis: {
+          categories: tim.kategori
+        },
+        chart: {
+          toolbar: true,
+          animations: {
+            enabled: true
+          },
+          subtitle: {
+            text: tim.rank
+          }
+        },
+        colors: ['#66DA26', '#2E93fA', '#546E7A', '#E91E63', '#FF9800']
+      };
+      this.rankingChart.series[0].data = tim.series;
+      this.rankingChart.series[0].name = tim.nama;
+      this.renderChart(this.rankingChart.options, this.rankingChart.series);
+    },
+    renderChart: function renderChart(options, series) {
+      var chartQuarter = new ApexCharts(document.getElementById('rankingChart'), this.rankingChart.options);
+      chartQuarter.destroy();
+      chartQuarter.updateOptions(options);
+      chartQuarter.updateSeries(series);
+      chartQuarter.render();
+    }
   }
 });
 
@@ -16541,9 +16854,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Jetstream_Button_vue__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @/Jetstream/Button.vue */ "./resources/js/Jetstream/Button.vue");
 /* harmony import */ var _Jetstream_SecondaryButton_vue__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @/Jetstream/SecondaryButton.vue */ "./resources/js/Jetstream/SecondaryButton.vue");
 /* harmony import */ var _Components_BarChart_vue__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @/Components/BarChart.vue */ "./resources/js/Components/BarChart.vue");
-/* harmony import */ var vue3_apexcharts__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! vue3-apexcharts */ "./node_modules/vue3-apexcharts/dist/vue3-apexcharts.common.js");
-/* harmony import */ var vue3_apexcharts__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(vue3_apexcharts__WEBPACK_IMPORTED_MODULE_5__);
-/* harmony import */ var postcss__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! postcss */ "./node_modules/postcss/lib/postcss.mjs");
+/* harmony import */ var _Components_RankingChart_vue__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @/Components/RankingChart.vue */ "./resources/js/Components/RankingChart.vue");
+/* harmony import */ var vue3_apexcharts__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! vue3-apexcharts */ "./node_modules/vue3-apexcharts/dist/vue3-apexcharts.common.js");
+/* harmony import */ var vue3_apexcharts__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(vue3_apexcharts__WEBPACK_IMPORTED_MODULE_6__);
+/* harmony import */ var _Components_LastUpdated_vue__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @/Components/LastUpdated.vue */ "./resources/js/Components/LastUpdated.vue");
+/* harmony import */ var postcss__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! postcss */ "./node_modules/postcss/lib/postcss.mjs");
+
+
 
 
 
@@ -16557,7 +16874,9 @@ __webpack_require__.r(__webpack_exports__);
     JetButton: _Jetstream_Button_vue__WEBPACK_IMPORTED_MODULE_2__["default"],
     JetSecondaryButton: _Jetstream_SecondaryButton_vue__WEBPACK_IMPORTED_MODULE_3__["default"],
     BarChart: _Components_BarChart_vue__WEBPACK_IMPORTED_MODULE_4__["default"],
-    apexchart: (vue3_apexcharts__WEBPACK_IMPORTED_MODULE_5___default())
+    RankingChart: _Components_RankingChart_vue__WEBPACK_IMPORTED_MODULE_5__["default"],
+    apexchart: (vue3_apexcharts__WEBPACK_IMPORTED_MODULE_6___default()),
+    LastUpdated: _Components_LastUpdated_vue__WEBPACK_IMPORTED_MODULE_7__["default"]
   },
   props: {
     penilaianDetails: Array,
@@ -16565,12 +16884,10 @@ __webpack_require__.r(__webpack_exports__);
     tims: Array,
     timUnits: Array,
     penilaianChart: Object,
+    rankingChart: Object,
     timList: Array,
     penilaianTims: Array,
     indexKriterias: Array
-  },
-  methods: {
-    updateSeries: function updateSeries() {}
   }
 }));
 
@@ -17464,6 +17781,7 @@ __webpack_require__.r(__webpack_exports__);
     tims: Array,
     timUnits: Array,
     penilaianChart: Object,
+    rankingChart: Object,
     timList: Array,
     penilaianTims: Array,
     indexKriterias: Array
@@ -21157,7 +21475,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
   }, [_hoisted_15, ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($props.timList, function (tim) {
     return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("option", {
       key: tim.id,
-      value: tim.id
+      value: tim.nama
     }, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(tim.nama), 9
     /* TEXT, PROPS */
     , _hoisted_16);
@@ -21180,6 +21498,103 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
   })])], 64
   /* STABLE_FRAGMENT */
   );
+}
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/js/Components/LastUpdated.vue?vue&type=template&id=0fd95dca":
+/*!*********************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/js/Components/LastUpdated.vue?vue&type=template&id=0fd95dca ***!
+  \*********************************************************************************************************************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "render": () => (/* binding */ render)
+/* harmony export */ });
+/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm-bundler.js");
+
+var _hoisted_1 = {
+  "class": "flex flex-col"
+};
+var _hoisted_2 = {
+  "class": "-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8"
+};
+var _hoisted_3 = {
+  "class": "py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8"
+};
+var _hoisted_4 = {
+  "class": "overflow-hidden border-b"
+};
+var _hoisted_5 = ["v-on:show"];
+
+var _hoisted_6 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("thead", {
+  "class": "bg-white"
+}, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("tr", null, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("th", {
+  scope: "col",
+  "class": "px-6 py-3 text-left text-xs font-medium text-black uppercase tracking-wider"
+}, " Nama Tim "), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("th", {
+  scope: "col",
+  "class": "px-6 py-3 text-left text-xs font-medium text-black uppercase tracking-wider"
+}, " Nama Penilai "), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("th", {
+  scope: "col",
+  "class": "px-6 py-3 text-left text-xs font-medium text-black uppercase tracking-wider"
+}, " Tim 5P/Unit yg Dinilai "), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("th", {
+  scope: "col",
+  "class": "px-6 py-3 text-left text-xs font-light text-black uppercase tracking-wider"
+}, " Tanggal Penilaian ")])], -1
+/* HOISTED */
+);
+
+var _hoisted_7 = {
+  "class": "bg-white divide-y divide-gray-200"
+};
+var _hoisted_8 = {
+  "class": "px-2 py-2 whitespace-nowrap"
+};
+var _hoisted_9 = {
+  "class": "flex items-center"
+};
+var _hoisted_10 = {
+  "class": "px-2 py-2 whitespace-nowrap"
+};
+var _hoisted_11 = {
+  "class": "flex items-center"
+};
+var _hoisted_12 = {
+  "class": "px-2 py-2 whitespace-nowrap"
+};
+var _hoisted_13 = {
+  "class": "flex items-center"
+};
+var _hoisted_14 = {
+  "class": "px-2 py-2 whitespace-nowrap"
+};
+var _hoisted_15 = {
+  "class": "flex items-center"
+};
+function render(_ctx, _cache, $props, $setup, $data, $options) {
+  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_1, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_2, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_3, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_4, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("table", {
+    "class": "min-w-full divide-y divide-gray-200",
+    "v-on:show": $options.getTimPenilai()
+  }, [_hoisted_6, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("tbody", _hoisted_7, [((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($props.penilaians, function (penilaian) {
+    return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("tr", {
+      key: penilaian.id
+    }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", _hoisted_8, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_9, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(penilaian.nama_tim), 1
+    /* TEXT */
+    )]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", _hoisted_10, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_11, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(penilaian.karyawan.nama), 1
+    /* TEXT */
+    )]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", _hoisted_12, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_13, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(penilaian.tim_unit.nama), 1
+    /* TEXT */
+    )]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", _hoisted_14, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_15, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(penilaian.tgl), 1
+    /* TEXT */
+    )])]);
+  }), 128
+  /* KEYED_FRAGMENT */
+  )), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" More people... ")])], 8
+  /* PROPS */
+  , _hoisted_5)])])])])]);
 }
 
 /***/ }),
@@ -21231,6 +21646,153 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
   }), 128
   /* KEYED_FRAGMENT */
   ))])])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true);
+}
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/js/Components/RankingChart.vue?vue&type=template&id=819a75da":
+/*!**********************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/js/Components/RankingChart.vue?vue&type=template&id=819a75da ***!
+  \**********************************************************************************************************************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "render": () => (/* binding */ render)
+/* harmony export */ });
+/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm-bundler.js");
+
+var _hoisted_1 = {
+  "class": "bg-white mb-5"
+};
+var _hoisted_2 = {
+  "class": "mt-3 flex items-center text-sm font-semibold"
+};
+
+var _hoisted_3 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+  "class": "mr-4 flex"
+}, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", null, "Periode : ")], -1
+/* HOISTED */
+);
+
+var _hoisted_4 = {
+  "class": "mt-3 flex items-center mb-5 text-sm font-semibold"
+};
+
+var _hoisted_5 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+  "class": "mr-4 flex"
+}, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", null, "Rank ")], -1
+/* HOISTED */
+);
+
+var _hoisted_6 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("option", {
+  value: "",
+  disabled: "",
+  selected: ""
+}, "Select", -1
+/* HOISTED */
+);
+
+var _hoisted_7 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("option", {
+  value: "top"
+}, "5 Teratas", -1
+/* HOISTED */
+);
+
+var _hoisted_8 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("option", {
+  value: "bottom"
+}, "5 Terbawah", -1
+/* HOISTED */
+);
+
+var _hoisted_9 = [_hoisted_6, _hoisted_7, _hoisted_8];
+
+var _hoisted_10 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("option", {
+  value: "",
+  disabled: "",
+  selected: ""
+}, "Select Team", -1
+/* HOISTED */
+);
+
+var _hoisted_11 = ["value"];
+var _hoisted_12 = {
+  "class": "ml-2 focus:ring-opacity-50 rounded-md shadow-sm mt-1 block"
+};
+
+var _hoisted_13 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" Lihat ");
+
+var _hoisted_14 = {
+  id: "rankingChart"
+};
+function render(_ctx, _cache, $props, $setup, $data, $options) {
+  var _component_jet_input = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("jet-input");
+
+  var _component_jet_button = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("jet-button");
+
+  var _component_apexcharts = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("apexcharts");
+
+  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_1, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_2, [_hoisted_3, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_jet_input, {
+    type: "date",
+    "class": "mt-1 block",
+    placeholder: "Tanggal Penilaian",
+    ref: "tgl",
+    modelValue: $data.form.periode,
+    "onUpdate:modelValue": _cache[0] || (_cache[0] = function ($event) {
+      return $data.form.periode = $event;
+    })
+  }, null, 8
+  /* PROPS */
+  , ["modelValue"])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_4, [_hoisted_5, (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("select", {
+    "class": "focus:ring-opacity-50 rounded-md shadow-sm mt-1 block",
+    "onUpdate:modelValue": _cache[1] || (_cache[1] = function ($event) {
+      return $data.form.rank = $event;
+    }),
+    onChange: _cache[2] || (_cache[2] = function ($event) {
+      return $options.getRanking($data.form.rank);
+    })
+  }, _hoisted_9, 544
+  /* HYDRATE_EVENTS, NEED_PATCH */
+  ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelSelect, $data.form.rank]]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("select", {
+    "class": "focus:ring-opacity-50 rounded-md shadow-sm mt-1 block w-3/4",
+    "onUpdate:modelValue": _cache[3] || (_cache[3] = function ($event) {
+      return $data.form.timRank = $event;
+    })
+  }, [_hoisted_10, ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($data.list.listTim, function (tim, index) {
+    return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("option", {
+      key: tim.id,
+      value: tim
+    }, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(index + 1) + " - " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(tim.nama) + " - " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(tim.nilai_final), 9
+    /* TEXT, PROPS */
+    , _hoisted_11);
+  }), 128
+  /* KEYED_FRAGMENT */
+  ))], 512
+  /* NEED_PATCH */
+  ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelSelect, $data.form.timRank]]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_12, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_jet_button, {
+    onClick: _cache[4] || (_cache[4] = function ($event) {
+      return $options.fillData();
+    })
+  }, {
+    "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
+      return [_hoisted_13];
+    }),
+    _: 1
+    /* STABLE */
+
+  })])])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_14, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_apexcharts, {
+    ref: "chart",
+    width: $props.rankingChart.width,
+    height: "300",
+    type: $props.rankingChart.type,
+    options: $props.rankingChart.options,
+    series: $props.rankingChart.series
+  }, null, 8
+  /* PROPS */
+  , ["width", "type", "options", "series"])])], 64
+  /* STABLE_FRAGMENT */
+  );
 }
 
 /***/ }),
@@ -22486,11 +23048,49 @@ var _hoisted_5 = {
 var _hoisted_6 = {
   id: "chart"
 };
+var _hoisted_7 = {
+  "class": "p-6 border-t border-gray-200 md:border-t-0 md:border-l"
+};
 
-var _hoisted_7 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createStaticVNode)("<div class=\"p-6 border-t border-gray-200 md:border-t-0 md:border-l\"><div class=\"flex items-center\"><svg fill=\"none\" stroke=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" viewBox=\"0 0 24 24\" class=\"w-8 h-8 text-gray-400\"><path d=\"M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z\"></path><path d=\"M15 13a3 3 0 11-6 0 3 3 0 016 0z\"></path></svg><div class=\"ml-4 text-lg text-gray-600 leading-7 font-semibold\"><a href=\"https://laracasts.com\">Laracasts</a></div></div><div class=\"ml-12\"><div class=\"mt-2 text-sm text-gray-500\"> Laracasts offers thousands of video tutorials on Laravel, PHP, and JavaScript development. Check them out, see for yourself, and massively level up your development skills in the process. </div><a href=\"https://laracasts.com\"><div class=\"mt-3 flex items-center text-sm font-semibold text-indigo-700\"><div>Start watching Laracasts</div><div class=\"ml-1 text-indigo-500\"><svg viewBox=\"0 0 20 20\" fill=\"currentColor\" class=\"w-4 h-4\"><path fill-rule=\"evenodd\" d=\"M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z\" clip-rule=\"evenodd\"></path></svg></div></div></a></div></div><div class=\"p-6 border-t border-gray-200\"><div class=\"flex items-center\"><svg fill=\"none\" stroke=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" viewBox=\"0 0 24 24\" class=\"w-8 h-8 text-gray-400\"><path d=\"M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z\"></path></svg><div class=\"ml-4 text-lg text-gray-600 leading-7 font-semibold\"><a href=\"https://tailwindcss.com/\">Tailwind</a></div></div><div class=\"ml-12\"><div class=\"mt-2 text-sm text-gray-500\"> Laravel Jetstream is built with Tailwind, an amazing utility first CSS framework that doesn&#39;t get in your way. You&#39;ll be amazed how easily you can build and maintain fresh, modern designs with this wonderful framework at your fingertips. </div></div></div><div class=\"p-6 border-t border-gray-200 md:border-l\"><div class=\"flex items-center\"><svg fill=\"none\" stroke=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" viewBox=\"0 0 24 24\" class=\"w-8 h-8 text-gray-400\"><path d=\"M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z\"></path></svg><div class=\"ml-4 text-lg text-gray-600 leading-7 font-semibold\">Authentication</div></div><div class=\"ml-12\"><div class=\"mt-2 text-sm text-gray-500\"> Authentication and registration views are included with Laravel Jetstream, as well as support for user email verification and resetting forgotten passwords. So, you&#39;re free to get started what matters most: building your application. </div></div></div>", 3);
+var _hoisted_8 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+  "class": "flex items-center"
+}, null, -1
+/* HOISTED */
+);
 
+var _hoisted_9 = {
+  "class": "ml-12"
+};
+var _hoisted_10 = {
+  "class": "mt-2 text-sm text-gray-500"
+};
+var _hoisted_11 = {
+  id: "rankingChart"
+};
+
+var _hoisted_12 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createStaticVNode)("<div class=\"p-6 border-t border-gray-200\"><div class=\"flex items-center\"><svg fill=\"none\" stroke=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" viewBox=\"0 0 24 24\" class=\"w-8 h-8 text-gray-400\"><path d=\"M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z\"></path></svg><div class=\"ml-4 text-lg text-gray-600 leading-7 font-semibold\"><a href=\"https://tailwindcss.com/\">Tailwind</a></div></div><div class=\"ml-12\"><div class=\"mt-2 text-sm text-gray-500\"> Laravel Jetstream is built with Tailwind, an amazing utility first CSS framework that doesn&#39;t get in your way. You&#39;ll be amazed how easily you can build and maintain fresh, modern designs with this wonderful framework at your fingertips. </div></div></div>", 1);
+
+var _hoisted_13 = {
+  "class": "p-6 border-t border-gray-200 md:border-l"
+};
+
+var _hoisted_14 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+  "class": "flex items-center"
+}, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+  "class": "ml-4 text-lg text-gray-600 leading-7 font-semibold"
+}, "Last Updated")], -1
+/* HOISTED */
+);
+
+var _hoisted_15 = {
+  "class": "mt-2 text-sm text-gray-500"
+};
 function render(_ctx, _cache, $props, $setup, $data, $options) {
   var _component_bar_chart = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("bar-chart");
+
+  var _component_ranking_chart = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("ranking-chart");
+
+  var _component_last_updated = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("last-updated");
 
   return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", null, [_hoisted_1, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_2, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_3, [_hoisted_4, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_5, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_6, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_bar_chart, {
     timList: _ctx.timList,
@@ -22501,7 +23101,21 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     indexKriterias: _ctx.indexKriterias
   }, null, 8
   /* PROPS */
-  , ["timList", "penilaianTims", "penilaianChart", "penilaianDetails", "tims", "indexKriterias"])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" \n                    <div class=\"mt-3 flex items-center text-sm font-semibold\">\n    \n                        <div class=\"flex justify-between font-semibold text-xl text-gray-800 leading-tight\">\n                            \n                            <select  class=\"border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm mt-1 block\"\n                                v-model=\"form.kriteria\">\n                                                \n                                <option value=\"\" disabled selected>Select Kriteria</option>\n                                <option value=\"P1\">P1</option>\n                                <option value=\"P2\">P2</option>\n                                <option value=\"P3\">P3</option>\n                                <option value=\"P4\">P4</option>\n                                <option value=\"P5\">P5</option>\n                                <option value=\"total\">Semua Nilai</option>\n                            </select>\n                        </div>\n\n                        <div class=\"ml-4 text-center text-sm sm:text-right sm:ml-0\">\n                            \n                            <select  class=\"border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm mt-1 block\"\n                                v-model=\"form.timUnit\">\n                                                \n                                <option value=\"\" disabled selected>Pilih Tim 5P</option>\n                                <option v-for=\"tim in timList\" :key=\"tim.id\" :value=\"tim.id\">{{tim.nama}}</option>\n                            </select>\n                        </div>\n                    </div>\n                    <div>\n                        <jet-button class=\"ml-2\" @click=\"getChartSeries()\">\n                            Lihat\n                        </jet-button>                            \n                    </div>                     ")])]), _hoisted_7])]);
+  , ["timList", "penilaianTims", "penilaianChart", "penilaianDetails", "tims", "indexKriterias"])])])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_7, [_hoisted_8, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_9, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_10, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_11, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_ranking_chart, {
+    timList: _ctx.timList,
+    penilaianTims: _ctx.penilaianTims,
+    rankingChart: _ctx.rankingChart,
+    penilaianDetails: _ctx.penilaianDetails,
+    tims: _ctx.tims,
+    indexKriterias: _ctx.indexKriterias
+  }, null, 8
+  /* PROPS */
+  , ["timList", "penilaianTims", "rankingChart", "penilaianDetails", "tims", "indexKriterias"])])])])]), _hoisted_12, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_13, [_hoisted_14, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_15, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_last_updated, {
+    penilaians: _ctx.penilaians,
+    tims: _ctx.tims
+  }, null, 8
+  /* PROPS */
+  , ["penilaians", "tims"])])])])])]);
 }
 
 /***/ }),
@@ -25182,10 +25796,11 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
         penilaianChart: _ctx.penilaianChart,
         timList: _ctx.timList,
         penilaianTims: _ctx.penilaianTims,
-        indexKriterias: _ctx.indexKriterias
+        indexKriterias: _ctx.indexKriterias,
+        rankingChart: _ctx.rankingChart
       }, null, 8
       /* PROPS */
-      , ["penilaianDetails", "penilaians", "tims", "timUnits", "penilaianChart", "timList", "penilaianTims", "indexKriterias"])])])])];
+      , ["penilaianDetails", "penilaians", "tims", "timUnits", "penilaianChart", "timList", "penilaianTims", "indexKriterias", "rankingChart"])])])])];
     }),
     _: 1
     /* STABLE */
@@ -65418,6 +66033,32 @@ _BarChart_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"].__
 
 /***/ }),
 
+/***/ "./resources/js/Components/LastUpdated.vue":
+/*!*************************************************!*\
+  !*** ./resources/js/Components/LastUpdated.vue ***!
+  \*************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _LastUpdated_vue_vue_type_template_id_0fd95dca__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./LastUpdated.vue?vue&type=template&id=0fd95dca */ "./resources/js/Components/LastUpdated.vue?vue&type=template&id=0fd95dca");
+/* harmony import */ var _LastUpdated_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./LastUpdated.vue?vue&type=script&lang=js */ "./resources/js/Components/LastUpdated.vue?vue&type=script&lang=js");
+
+
+
+_LastUpdated_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"].render = _LastUpdated_vue_vue_type_template_id_0fd95dca__WEBPACK_IMPORTED_MODULE_0__.render
+/* hot reload */
+if (false) {}
+
+_LastUpdated_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"].__file = "resources/js/Components/LastUpdated.vue"
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_LastUpdated_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"]);
+
+/***/ }),
+
 /***/ "./resources/js/Components/Pagination.vue":
 /*!************************************************!*\
   !*** ./resources/js/Components/Pagination.vue ***!
@@ -65441,6 +66082,32 @@ if (false) {}
 _Pagination_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"].__file = "resources/js/Components/Pagination.vue"
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_Pagination_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"]);
+
+/***/ }),
+
+/***/ "./resources/js/Components/RankingChart.vue":
+/*!**************************************************!*\
+  !*** ./resources/js/Components/RankingChart.vue ***!
+  \**************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _RankingChart_vue_vue_type_template_id_819a75da__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./RankingChart.vue?vue&type=template&id=819a75da */ "./resources/js/Components/RankingChart.vue?vue&type=template&id=819a75da");
+/* harmony import */ var _RankingChart_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./RankingChart.vue?vue&type=script&lang=js */ "./resources/js/Components/RankingChart.vue?vue&type=script&lang=js");
+
+
+
+_RankingChart_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"].render = _RankingChart_vue_vue_type_template_id_819a75da__WEBPACK_IMPORTED_MODULE_0__.render
+/* hot reload */
+if (false) {}
+
+_RankingChart_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"].__file = "resources/js/Components/RankingChart.vue"
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_RankingChart_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"]);
 
 /***/ }),
 
@@ -67716,6 +68383,22 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./resources/js/Components/LastUpdated.vue?vue&type=script&lang=js":
+/*!*************************************************************************!*\
+  !*** ./resources/js/Components/LastUpdated.vue?vue&type=script&lang=js ***!
+  \*************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* reexport safe */ _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_LastUpdated_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_0__["default"])
+/* harmony export */ });
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_LastUpdated_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!../../../node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./LastUpdated.vue?vue&type=script&lang=js */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/js/Components/LastUpdated.vue?vue&type=script&lang=js");
+ 
+
+/***/ }),
+
 /***/ "./resources/js/Components/Pagination.vue?vue&type=script&lang=js":
 /*!************************************************************************!*\
   !*** ./resources/js/Components/Pagination.vue?vue&type=script&lang=js ***!
@@ -67728,6 +68411,22 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (/* reexport safe */ _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_Pagination_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_0__["default"])
 /* harmony export */ });
 /* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_Pagination_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!../../../node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./Pagination.vue?vue&type=script&lang=js */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/js/Components/Pagination.vue?vue&type=script&lang=js");
+ 
+
+/***/ }),
+
+/***/ "./resources/js/Components/RankingChart.vue?vue&type=script&lang=js":
+/*!**************************************************************************!*\
+  !*** ./resources/js/Components/RankingChart.vue?vue&type=script&lang=js ***!
+  \**************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* reexport safe */ _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_RankingChart_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_0__["default"])
+/* harmony export */ });
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_RankingChart_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!../../../node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./RankingChart.vue?vue&type=script&lang=js */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/js/Components/RankingChart.vue?vue&type=script&lang=js");
  
 
 /***/ }),
@@ -69060,6 +69759,22 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./resources/js/Components/LastUpdated.vue?vue&type=template&id=0fd95dca":
+/*!*******************************************************************************!*\
+  !*** ./resources/js/Components/LastUpdated.vue?vue&type=template&id=0fd95dca ***!
+  \*******************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "render": () => (/* reexport safe */ _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_dist_templateLoader_js_ruleSet_1_rules_2_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_LastUpdated_vue_vue_type_template_id_0fd95dca__WEBPACK_IMPORTED_MODULE_0__.render)
+/* harmony export */ });
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_dist_templateLoader_js_ruleSet_1_rules_2_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_LastUpdated_vue_vue_type_template_id_0fd95dca__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!../../../node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[2]!../../../node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./LastUpdated.vue?vue&type=template&id=0fd95dca */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/js/Components/LastUpdated.vue?vue&type=template&id=0fd95dca");
+
+
+/***/ }),
+
 /***/ "./resources/js/Components/Pagination.vue?vue&type=template&id=0e1fe725":
 /*!******************************************************************************!*\
   !*** ./resources/js/Components/Pagination.vue?vue&type=template&id=0e1fe725 ***!
@@ -69072,6 +69787,22 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "render": () => (/* reexport safe */ _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_dist_templateLoader_js_ruleSet_1_rules_2_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_Pagination_vue_vue_type_template_id_0e1fe725__WEBPACK_IMPORTED_MODULE_0__.render)
 /* harmony export */ });
 /* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_dist_templateLoader_js_ruleSet_1_rules_2_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_Pagination_vue_vue_type_template_id_0e1fe725__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!../../../node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[2]!../../../node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./Pagination.vue?vue&type=template&id=0e1fe725 */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/js/Components/Pagination.vue?vue&type=template&id=0e1fe725");
+
+
+/***/ }),
+
+/***/ "./resources/js/Components/RankingChart.vue?vue&type=template&id=819a75da":
+/*!********************************************************************************!*\
+  !*** ./resources/js/Components/RankingChart.vue?vue&type=template&id=819a75da ***!
+  \********************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "render": () => (/* reexport safe */ _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_dist_templateLoader_js_ruleSet_1_rules_2_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_RankingChart_vue_vue_type_template_id_819a75da__WEBPACK_IMPORTED_MODULE_0__.render)
+/* harmony export */ });
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_dist_templateLoader_js_ruleSet_1_rules_2_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_RankingChart_vue_vue_type_template_id_819a75da__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!../../../node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[2]!../../../node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./RankingChart.vue?vue&type=template&id=819a75da */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/js/Components/RankingChart.vue?vue&type=template&id=819a75da");
 
 
 /***/ }),
